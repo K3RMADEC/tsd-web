@@ -1,0 +1,39 @@
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+# Server port
+server:
+  port: 8080
+
+#KAFKA CONFIGURATION
+spring:
+  kafka:
+    bootstrap-servers: rocket-01.srvs.cloudkafka.com:9094,rocket-02.srvs.cloudkafka.com:9094,rocket-03.srvs.cloudkafka.com:9094
+    properties:
+      security:
+        protocol: SASL_SSL
+      sasl:
+        mechanism: SCRAM-SHA-256
+        jaas:
+          config: org.apache.kafka.common.security.scram.ScramLoginModule required username="ytlg5n1a" password="e_1CGGDmDMOLVMddqkYYVFeuGDbj6QsP";
+    consumer:
+      #solo para el cloudrafka
+      group-id: ytlg5n1a-consumers
+      auto-offset-reset: latest
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+  #Mongo DB
+  data:
+    mongodb:
+      uri: mongodb+srv://tsd_user:tsd_password@tsdcluster.mdnt4.gcp.mongodb.net/tsd?retryWrites=true&w=majority
+      database: tsd
+      auto-index-creation: true
+
+#solo para el cloudkarafka
+cloudkarafka:
+  topic: ytlg5n1a-default
