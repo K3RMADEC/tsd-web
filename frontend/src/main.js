@@ -21,8 +21,18 @@ import './plugins/vee-validate'
 import vuetify from './plugins/vuetify'
 import i18n from './i18n'
 import VeeValidate from 'vee-validate'
+import { MdDatepicker, MdButton, MdDialog, MdContent } from 'vue-material/dist/components'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default-dark.css'
 
 Vue.config.productionTip = false
+Vue.use(MdDatepicker)
+Vue.use(MdButton)
+Vue.use(MdDialog)
+Vue.use(MdContent)
+
+Vue.material.locale.dateFormat = 'dd/MM/yyyy'
+Vue.material.locale.firstDayOfAWeek = 1
 
 new Vue({
   router,

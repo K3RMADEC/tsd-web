@@ -103,6 +103,12 @@
           adminPage: true,
         },
         {
+          icon: 'mdi-history',
+          title: 'historic',
+          to: '/pages/historic',
+          adminPage: true,
+        },
+        {
           icon: 'mdi-view-dashboard',
           title: 'dashboard',
           to: '/dashboard',

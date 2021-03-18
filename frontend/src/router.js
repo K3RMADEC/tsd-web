@@ -42,6 +42,14 @@ const router = new Router({
           meta: {
             public: false,
           },
+          name: 'Historic',
+          path: 'pages/historic',
+          component: () => import('@/views/dashboard/pages/Historic'),
+        },
+        {
+          meta: {
+            public: false,
+          },
           name: 'User Profile',
           path: 'pages/user-profile',
           component: () => import('@/views/dashboard/pages/UserProfile'),

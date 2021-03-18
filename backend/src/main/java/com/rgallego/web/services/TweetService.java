@@ -11,10 +11,13 @@ import reactor.core.publisher.Flux;
 @Slf4j
 public class TweetService {
 
-    @Autowired
-    private TweetRepository tweetRepository;
+  private final long oneDayInMilisec = ((24 * 60 * 60) - 1) * 1000; // ((24h x 60min x 60sec) - 1sec) x 1000 miliseconds
 
-    public Flux<TweetDocument> getTweetsByDate(Long from, Long to) {
-        return tweetRepository.findAllByDate(from, to);
-    }
+  @Autowired
+  private TweetRepository tweetRepository;
+
+  public Flux<TweetDocument> getTweetsByDate(Long from, Long to) {
+    to += oneDayInMilisec;
+    return tweetRepository.findAllByDate(from, to);
+  }
 }

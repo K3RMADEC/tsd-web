@@ -11,7 +11,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
@@ -27,7 +28,7 @@ public class TweetDocument {
     private String tweetId;
     @Indexed
     private Long timestamp;
-    private List<Rule> matchingRules;
+    private String matchingRules;
 
     /**
      * Constructor for parsing TweetData object to TweetDocument
@@ -35,20 +36,27 @@ public class TweetDocument {
      */
     public TweetDocument(TweetData tweetData) {
         if(tweetData.getData() != null) {
-            date = tweetData.getData().getCreatedAt();
-            text = tweetData.getData().getText();
-            authorId = tweetData.getData().getAuthorId();
-            tweetId = tweetData.getData().getTweetId();
-            if(date != null) {
+            this.text = tweetData.getData().getText();
+            this.authorId = tweetData.getData().getAuthorId();
+            this.tweetId = tweetData.getData().getTweetId();
+            // Fill and format timestamp and date fields
+            if (tweetData.getData().getCreatedAt() != null) {
                 // Format string date to miliseconds
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                SimpleDateFormat inputSdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                // Format date to readable string
+                SimpleDateFormat outputSdf = new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss");
                 try {
-                    timestamp = sdf.parse(date).getTime();
+                    Date date = inputSdf.parse(tweetData.getData().getCreatedAt());
+                    this.timestamp = date.getTime();
+                    this.date = outputSdf.format(date);
                 } catch (ParseException e) {
                     log.error("Error parsing tweet date - {}", e.getCause());
                 }
             }
         }
-        matchingRules = tweetData.getMatchingRules();
+        // Fill and format matchingRules (join the Tags only)
+        this.matchingRules = tweetData.getMatchingRules().stream()
+                .map(Rule::getTag)
+                .collect(Collectors.joining(", "));
     }
 }
