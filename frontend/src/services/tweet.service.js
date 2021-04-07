@@ -10,6 +10,10 @@ class TweetService {
   getTweetsByDate (from, to) {
     return axios.get('getByDate', { params: { from, to } }, { headers: authHeader() })
   }
+
+  getGeoTweetsByDate (from, to) {
+    return axios.get('getGeoByDate', { params: { from, to } }, { headers: authHeader() })
+  }
 }
 
 export default new TweetService()

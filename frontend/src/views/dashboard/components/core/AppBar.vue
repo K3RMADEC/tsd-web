@@ -85,6 +85,8 @@
       class="ml-2"
       color="red"
       min-width="0"
+      small
+      fab
       @click="logout()"
     >
       <v-icon color="white">

@@ -2,7 +2,6 @@ package com.rgallego.web.kafka.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,12 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TweetData implements Serializable {
+public class TweetIncludes implements Serializable {
 
-  private Tweet data;
+  private List<TweetUser> users;
 
-  @JsonProperty("matching_rules")
-  private List<Rule> matchingRules;
-
-  private TweetIncludes includes;
+  private List<TweetPlace> places;
 }

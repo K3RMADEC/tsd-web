@@ -106,7 +106,18 @@
           icon: 'mdi-history',
           title: 'historic',
           to: '/pages/historic',
+          adminPage: false,
+        },
+        {
+          icon: 'mdi-water-pump',
+          title: 'connector',
+          to: '/pages/connector',
           adminPage: true,
+        },
+        {
+          title: 'leaflet-map',
+          icon: 'mdi-map-marker',
+          to: '/maps/leaflet-map',
         },
         {
           icon: 'mdi-view-dashboard',

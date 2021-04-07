@@ -8,6 +8,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     baseUrl: 'http://localhost:8080/',
+    connectorBaseUrl: 'http://localhost:8081/',
     barColor: 'rgba(0, 0, 0, .8), rgba(0, 0, 0, .8)',
     loginImage: '@/assets/login.jpg',
     drawer: null,

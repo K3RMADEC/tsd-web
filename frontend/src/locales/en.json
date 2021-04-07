@@ -40,5 +40,7 @@
   "vforms": "Validation Forms",
   "widgets": "Widgets",
   "wizard": "Wizard",
-  "historic": "Historic"
+  "historic": "Historic",
+  "connector": "Connector",
+  "leaflet-map": "Leaftlet Map"
 }

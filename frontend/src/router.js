@@ -50,6 +50,14 @@ const router = new Router({
           meta: {
             public: false,
           },
+          name: 'Connector',
+          path: 'pages/connector',
+          component: () => import('@/views/dashboard/pages/Connector'),
+        },
+        {
+          meta: {
+            public: false,
+          },
           name: 'User Profile',
           path: 'pages/user-profile',
           component: () => import('@/views/dashboard/pages/UserProfile'),
@@ -95,6 +103,14 @@ const router = new Router({
           name: 'Google Maps',
           path: 'maps/google-maps',
           component: () => import('@/views/dashboard/maps/GoogleMaps'),
+        },
+        {
+          meta: {
+            public: false,
+          },
+          name: 'Leaflet Map',
+          path: 'maps/leaflet-map',
+          component: () => import('@/views/dashboard/maps/LeafletMap'),
         },
         {
           meta: {

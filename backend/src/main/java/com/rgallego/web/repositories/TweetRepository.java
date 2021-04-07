@@ -1,7 +1,6 @@
 package com.rgallego.web.repositories;
 
 import com.rgallego.web.documents.TweetDocument;
-import com.rgallego.web.kafka.bean.Tweet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,6 +26,18 @@ public class TweetRepository {
                 new Criteria().andOperator(
                         Criteria.where("timestamp").gte(startDate),
                         Criteria.where("timestamp").lte(endDate)
+                )
+        );
+        return template.find(query, TweetDocument.class);
+    }
+
+    public Flux<TweetDocument> findAllByDateAndCoordinatesExists(Long startDate, Long endDate) {
+        Query query = new Query();
+        query.addCriteria(
+                new Criteria().andOperator(
+                        Criteria.where("timestamp").gte(startDate),
+                        Criteria.where("timestamp").lte(endDate),
+                        Criteria.where("coordinates").exists(true)
                 )
         );
         return template.find(query, TweetDocument.class);

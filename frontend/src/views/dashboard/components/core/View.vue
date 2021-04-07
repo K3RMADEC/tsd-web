@@ -2,7 +2,7 @@
   <v-main>
     <router-view style="height: 100%;" />
 
-    <dashboard-core-footer />
+    <!-- <dashboard-core-footer /> -->
   </v-main>
 </template>
 
@@ -10,8 +10,8 @@
   export default {
     name: 'DashboardCoreView',
 
-    components: {
-      DashboardCoreFooter: () => import('./Footer'),
-    },
+    // components: {
+    // DashboardCoreFooter: () => import('./Footer'),
+    // },
   }
 </script>

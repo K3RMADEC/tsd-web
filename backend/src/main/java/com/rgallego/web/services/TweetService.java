@@ -20,4 +20,9 @@ public class TweetService {
     to += oneDayInMilisec;
     return tweetRepository.findAllByDate(from, to);
   }
+
+  public Flux<TweetDocument> getGeoTweetsByDate(Long from, Long to) {
+    to += oneDayInMilisec;
+    return tweetRepository.findAllByDateAndCoordinatesExists(from, to);
+  }
 }
