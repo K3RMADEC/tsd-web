@@ -76,14 +76,19 @@
             <p><v-icon>mdi-calendar-clock</v-icon> {{ tweetDetail.date }}</p>
             <p><v-icon>mdi-ruler</v-icon> {{ tweetDetail.matchingRules }}</p>
             <p> {{ tweetDetail.text }}</p>
+            <a
+              target="_blank"
+              :href="'https://twitter.com/ProjectTsd/status/'+tweetDetail.tweetId"
+            >Show in Twitter</a>
           </v-card-text>
         </base-material-card>
       </v-col>
     </v-row>
 
     <v-map
+      v-if="showMap"
       style="height: 80%;"
-      :zoom="3"
+      :zoom="2"
       :center="initialLocation"
     >
       <v-icondefault />
