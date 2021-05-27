@@ -1,7 +1,10 @@
 package com.rgallego.web.repositories;
 
+import com.rgallego.web.bean.TweetRequest;
 import com.rgallego.web.documents.TweetDocument;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,37 +23,47 @@ public class TweetRepository {
         return template.save(tweet);
     }
 
-    public Flux<TweetDocument> findAllByDate(Long startDate, Long endDate) {
+    public Flux<TweetDocument> findByDate(TweetRequest request) {
         Query query = new Query();
         query.addCriteria(
                 new Criteria().andOperator(
-                        Criteria.where("timestamp").gte(startDate),
-                        Criteria.where("timestamp").lte(endDate)
+                        Criteria.where("timestamp").gte(request.getFrom()),
+                        Criteria.where("timestamp").lte(request.getTo())
                 )
         );
+        if (request.getRules() != null) {
+            query.addCriteria(Criteria.where("matchingRules").all(request.getRules()));
+        }
+        query.with(PageRequest.of(request.getPage(), request.getItemsPerPage(), Sort.by("timestamp").descending()));
         return template.find(query, TweetDocument.class);
     }
 
-    public Flux<TweetDocument> findAllByDateAndCoordinatesExists(Long startDate, Long endDate) {
+    public Mono<Long> countAllByDate(TweetRequest request) {
         Query query = new Query();
         query.addCriteria(
                 new Criteria().andOperator(
-                        Criteria.where("timestamp").gte(startDate),
-                        Criteria.where("timestamp").lte(endDate),
+                        Criteria.where("timestamp").gte(request.getFrom()),
+                        Criteria.where("timestamp").lte(request.getTo())
+                )
+        );
+        if (request.getRules() != null) {
+            query.addCriteria(Criteria.where("matchingRules").all(request.getRules()));
+        }
+        return template.count(query, TweetDocument.class);
+    }
+
+    public Flux<TweetDocument> findAllByDateAndCoordinatesExists(TweetRequest request) {
+        Query query = new Query();
+        query.addCriteria(
+                new Criteria().andOperator(
+                        Criteria.where("timestamp").gte(request.getFrom()),
+                        Criteria.where("timestamp").lte(request.getTo()),
                         Criteria.where("coordinates").exists(true)
                 )
         );
+        if (request.getRules() != null) {
+            query.addCriteria(Criteria.where("matchingRules").all(request.getRules()));
+        }
         return template.find(query, TweetDocument.class);
     }
-
-
-    //todo paginacion
-//    Sort sort = Sort.by("id").descending();
-//        if (StringUtils.isNotBlank(request.getField()) && StringUtils.isNotBlank(request.getOrder())) {
-//        sort = FebsConstant.ORDER_ASC.equals(request.getOrder()) ?
-//                Sort.by(request.getField()).ascending() :
-//                Sort.by(request.getField()).descending();
-//    }
-//    Pageable pageable = PageRequest.of(request.getPageNum(), request.getPageSize(), sort);
-//        return template.find(query.with(pageable), clazz);
 }

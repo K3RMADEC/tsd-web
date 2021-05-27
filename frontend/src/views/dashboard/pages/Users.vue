@@ -103,7 +103,7 @@
                     v-model="newUser.role"
                     prepend-icon="mdi-card-account-details"
                     :items="roleList"
-                    label="Selecciona un rol"
+                    label="Select one rol"
                   />
                 </v-form>
               </v-card-text>

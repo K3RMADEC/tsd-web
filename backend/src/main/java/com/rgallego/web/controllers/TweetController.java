@@ -1,11 +1,13 @@
 package com.rgallego.web.controllers;
 
+import com.rgallego.web.bean.TweetRequest;
 import com.rgallego.web.documents.TweetDocument;
 import com.rgallego.web.services.TweetService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/tweets")
@@ -16,17 +18,21 @@ public class TweetController {
     @Autowired
     private TweetService tweetService;
 
-    @GetMapping("/getByDate")
-    public Flux<TweetDocument> getByDate(@RequestParam Long from,
-                                         @RequestParam Long to) {
+    @PostMapping("/getByDate")
+    public Flux<TweetDocument> getByDate(@RequestBody TweetRequest request) {
         log.info("Get tweets by date Request");
-        return tweetService.getTweetsByDate(from, to);
+        return tweetService.getTweetsByDate(request);
     }
 
-    @GetMapping("/getGeoByDate")
-    public Flux<TweetDocument> getGeoByDate(@RequestParam Long from,
-                                            @RequestParam Long to) {
+    @PostMapping("/countByDate")
+    public Mono<Long> countByDate(@RequestBody TweetRequest request) {
+        log.info("Count tweets by date Request");
+        return tweetService.countAllTweetsByDate(request);
+    }
+
+    @PostMapping("/getGeoByDate")
+    public Flux<TweetDocument> getGeoByDate(@RequestBody TweetRequest request) {
         log.info("Get geo tweets by date Request");
-        return tweetService.getGeoTweetsByDate(from, to);
+        return tweetService.getGeoTweetsByDate(request);
     }
 }

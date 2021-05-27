@@ -4,7 +4,9 @@
     fluid
     tag="section"
   >
-    <base-material-card color="info">
+    <base-material-card
+      color="info"
+    >
       <template v-slot:heading>
         <div class="display-2 font-weight-light">
           <v-icon>mdi-filter</v-icon>
@@ -17,7 +19,7 @@
           <v-row>
             <v-col
               cols="12"
-              md="4"
+              md="3"
             >
               <md-datepicker
                 v-model="dateFrom"
@@ -29,7 +31,7 @@
             </v-col>
             <v-col
               cols="12"
-              md="4"
+              md="3"
             >
               <md-datepicker
                 v-model="dateTo"
@@ -41,12 +43,27 @@
             </v-col>
             <v-col
               cols="12"
+              md="3"
+            >
+              <v-select
+                v-model="matchingRules"
+                multiple
+                chips
+                prepend-icon="mdi-ruler"
+                :items="ruleList"
+                item-text="tag"
+                item-value="tag"
+                label="Select one rule"
+              />
+            </v-col>
+            <v-col
+              cols="12"
               class="text-right"
             >
               <v-btn
                 color="info"
                 class="mr-0"
-                @click="loadData()"
+                @click="loadTweets()"
               >
                 <v-icon class="pr-2">
                   mdi-magnify
@@ -59,7 +76,7 @@
       </v-form>
     </base-material-card>
     <base-material-card
-      v-show="showTable"
+      v-if="showTable"
       icon="mdi-database"
       title="Tweet Table"
       class="px-5 py-3"
@@ -67,11 +84,24 @@
       <v-data-table
         :headers="headers"
         :items="tweetList"
+        :options.sync="options"
+        :server-items-length="totalTweets"
+        :items-per-page="5"
+        :footer-props="footerProps"
         fixed-header
-        height="500px"
-        hide-default-footer
-        disable-pagination
-      />
+        height="400px"
+      >
+        <template v-slot:[`item.matchingRules`]="{ item }">
+          <v-chip
+            v-for="rule in item.matchingRules"
+            :key="rule"
+            class="ma-2"
+            color="primary"
+          >
+            {{ rule }}
+          </v-chip>
+        </template>
+      </v-data-table>
     </base-material-card>
     <base-material-snackbar
       v-model="showSnackbar"
@@ -88,8 +118,15 @@
 
 <script>
   import TweetService from '@/services/tweet.service.js'
+  import ConnectorService from '@/services/connector.service.js'
   export default {
     data: () => ({
+      matchingRules: null,
+      ruleList: [],
+      footerProps: { 'items-per-page-options': [5, 10, 20, 30] },
+      totalTweets: 0,
+      options: {},
+      loading: false,
       showSnackbar: false,
       snackbarColor: 'error',
       snackbarMessage: '',
@@ -118,13 +155,41 @@
       dateTo: Number(new Date()),
       showTable: false,
     }),
+    watch: {
+      options: {
+        handler () {
+          this.loadData()
+        },
+      },
+    },
+    created () {
+      this.loadRules()
+    },
     methods: {
+      loadRules () {
+        ConnectorService.getRules().then(
+          response => {
+            this.ruleList = response.data.data
+          },
+        )
+      },
+      loadTweets () {
+        this.loadData()
+        this.showTable = true
+      },
       loadData () {
-        if (this.dateFrom && this.dateTo) {
-          TweetService.getTweetsByDate(this.dateFrom, this.dateTo).then(
+        const { page, itemsPerPage } = this.options
+        if (this.dateFrom && this.dateTo && page) {
+          this.loading = true
+          TweetService.countByDate(this.dateFrom, this.dateTo, this.matchingRules).then(
+            response => {
+              this.totalTweets = response.data
+            },
+          )
+          TweetService.getTweetsByDate(this.dateFrom, this.dateTo, this.matchingRules, page - 1, itemsPerPage).then(
             response => {
               this.tweetList = response.data
-              this.showTable = true
+              this.loading = false
             },
           )
         }

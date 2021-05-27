@@ -4,6 +4,7 @@ import com.rgallego.web.kafka.bean.Rule;
 import com.rgallego.web.kafka.bean.TweetData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,11 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
+@Setter
 @NoArgsConstructor
 @Document(collection = "tweets")
 public class TweetDocument {
@@ -29,7 +32,7 @@ public class TweetDocument {
     private String tweetId;
     @Indexed
     private Long timestamp;
-    private String matchingRules;
+    private List<String> matchingRules;
     private Coordinates coordinates;
 
     /**
@@ -61,9 +64,9 @@ public class TweetDocument {
             double[] bbox = tweetData.getIncludes().getPlaces().get(0).getGeo().getBbox();
             coordinates = new Coordinates((bbox[1] + bbox[3]) / 2, (bbox[0] + bbox[2]) / 2);
         }
-        // Fill and format matchingRules (join the Tags only)
+        // Transform matching rule list to tag list
         this.matchingRules = tweetData.getMatchingRules().stream()
                 .map(Rule::getTag)
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.toList());
     }
 }

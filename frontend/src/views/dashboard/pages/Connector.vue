@@ -14,10 +14,22 @@
       >
         <v-col md="2">
           <h1>
-            Status: <v-icon :color="isStreamOpen ? 'green' : 'red'">
+            <!-- 0 open, 1 close, 2 interrupt -->
+            Status: <v-icon :color="streamStatus == 1 ? 'red' : streamStatus == 0 ? 'green' : 'yellow'">
               mdi-checkbox-blank-circle
             </v-icon>
           </h1>
+        </v-col>
+        <v-col md="1">
+          <v-btn
+            fab
+            small
+            @click="loadStreamStatus()"
+          >
+            <v-icon>
+              mdi-refresh
+            </v-icon>
+          </v-btn>
         </v-col>
         <v-col md="1">
           <v-btn
@@ -171,7 +183,7 @@
       },
       headers: ['Tag', 'Value', ''],
       rules: [],
-      isStreamOpen: false,
+      streamStatus: 1, // 0 open, 1 close, 2 interrupt
     }),
     created () {
       this.loadRules()
@@ -208,11 +220,8 @@
       },
       loadStreamStatus () {
         ConnectorService.getStreamStatus().then(
-          () => {
-            this.isStreamOpen = true
-          },
-          () => {
-            this.isStreamOpen = false
+          response => {
+            this.streamStatus = response.data
           },
         )
       },

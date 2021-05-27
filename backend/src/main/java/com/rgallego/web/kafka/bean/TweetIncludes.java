@@ -16,7 +16,5 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TweetIncludes implements Serializable {
 
-  private List<TweetUser> users;
-
   private List<TweetPlace> places;
 }

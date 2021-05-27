@@ -43,6 +43,22 @@
                 </v-col>
                 <v-col
                   cols="12"
+                  md="6"
+                >
+                  <v-select
+                    v-model="matchingRules"
+                    multiple
+                    chips
+                    prepend-icon="mdi-ruler"
+                    :items="ruleList"
+                    item-text="tag"
+                    item-value="tag"
+                    label="Select one rule"
+                  />
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="6"
                   class="text-right"
                 >
                   <v-btn
@@ -94,6 +110,7 @@
       <v-icondefault />
       <v-tilelayer url="http://{s}.tile.osm.org/{z}/{x}/{y}.png" />
       <v-marker-cluster
+        ref="clusterRef"
         :options="clusterOptions"
         @clusterclick="click()"
         @ready="ready"
@@ -119,6 +136,7 @@
   import iconUrl from 'leaflet/dist/images/marker-icon.png'
   import shadowUrl from 'leaflet/dist/images/marker-shadow.png'
   import TweetService from '@/services/tweet.service.js'
+  import ConnectorService from '@/services/connector.service.js'
 
   export default {
     components: {
@@ -135,6 +153,8 @@
                                             { iconUrl, shadowUrl },
       ))
       return {
+        matchingRules: null,
+        ruleList: [],
         tweetDetail: null,
         tweetList: [],
         showMap: false,
@@ -153,14 +173,25 @@
         })
       }, 5000)
     },
+    created () {
+      this.loadRules()
+    },
     methods: {
+      loadRules () {
+        ConnectorService.getRules().then(
+          response => {
+            this.ruleList = response.data.data
+          },
+        )
+      },
       click: (e) => console.log('clusterclick', e),
       ready: (e) => console.log('ready', e),
       loadData () {
         if (this.dateFrom && this.dateTo) {
-          TweetService.getGeoTweetsByDate(this.dateFrom, this.dateTo).then(
+          TweetService.getGeoTweetsByDate(this.dateFrom, this.dateTo, this.matchingRules).then(
             response => {
               this.tweetList = response.data
+              this.$refs.clusterRef.mapObject.refreshClusters()
               this.showMap = true
             },
           )
@@ -185,5 +216,12 @@
   html, body {
     height: 100%;
     margin: 0;
+  }
+
+  .md-datepicker-dialog {
+    z-index: 1000;
+  }
+  .v-menu__content {
+    z-index: 1000 !important;
   }
 </style>

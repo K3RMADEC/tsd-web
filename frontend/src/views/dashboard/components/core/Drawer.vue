@@ -115,7 +115,7 @@
           adminPage: true,
         },
         {
-          title: 'leaflet-map',
+          title: 'map',
           icon: 'mdi-map-marker',
           to: '/maps/leaflet-map',
         },

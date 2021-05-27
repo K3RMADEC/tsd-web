@@ -108,7 +108,7 @@ const router = new Router({
           meta: {
             public: false,
           },
-          name: 'Leaflet Map',
+          name: 'Map',
           path: 'maps/leaflet-map',
           component: () => import('@/views/dashboard/maps/LeafletMap'),
         },

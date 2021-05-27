@@ -7,12 +7,19 @@ axios.defaults.headers['Access-Control-Allow-Origin'] = '*'
 // todo  añadir la cabecera de authHeader aqui
 
 class TweetService {
-  getTweetsByDate (from, to) {
-    return axios.get('getByDate', { params: { from, to } }, { headers: authHeader() })
+  getTweetsByDate (from, to, rules, page, itemsPerPage) {
+    var request = { from, to, rules, page, itemsPerPage }
+    return axios.post('getByDate', request, { headers: authHeader() })
   }
 
-  getGeoTweetsByDate (from, to) {
-    return axios.get('getGeoByDate', { params: { from, to } }, { headers: authHeader() })
+  countByDate (from, to, rules) {
+    var request = { from, to, rules }
+    return axios.post('countByDate', request, { headers: authHeader() })
+  }
+
+  getGeoTweetsByDate (from, to, rules) {
+    var request = { from, to, rules }
+    return axios.post('getGeoByDate', request, { headers: authHeader() })
   }
 }
 
