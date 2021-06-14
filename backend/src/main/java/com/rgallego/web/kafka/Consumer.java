@@ -13,8 +13,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -26,7 +24,7 @@ class Consumer {
     @Autowired
     private TweetRepository tweetRepository;
 
-    @KafkaListener(topics = "${cloudkarafka.topic}")
+    @KafkaListener(topics = "${spring.kafka.topic}")
     public void processMessage(String message,
                                @Header(KafkaHeaders.RECEIVED_PARTITION_ID) List<Integer> partitions,
                                @Header(KafkaHeaders.RECEIVED_TOPIC) List<String> topics,

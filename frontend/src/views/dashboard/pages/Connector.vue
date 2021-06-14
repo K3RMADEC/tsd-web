@@ -127,7 +127,74 @@
                     label="Tag"
                     type="text"
                   />
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      md="4"
+                    >
+                      <v-select
+                        v-model="lang"
+                        :items="langList"
+                        item-text="text"
+                        item-value="id"
+                        label="Select language"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="4"
+                    >
+                      <v-checkbox
+                        v-model="cbIgnoreRt"
+                        color="primary"
+                        label="Ignore ReTweets"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="4"
+                    >
+                      <v-checkbox
+                        v-model="cbIgnoreReply"
+                        color="primary"
+                        label="Ignore Replies"
+                      />
+                    </v-col>
+                  </v-row>
+                  <v-row>
+                    <v-col
+                      cols="12"
+                      md="4"
+                    >
+                      <v-select
+                        v-model="operator"
+                        :items="operatorList"
+                        item-text="text"
+                        item-value="id"
+                        label="Select operator"
+                      />
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="8"
+                    >
+                      <v-combobox
+                        v-model="keywordList"
+                        multiple
+                        label="Keywords"
+                        chips
+                        deletable-chips
+                        :search-input.sync="search"
+                        class="keywords-input"
+                        clearable
+                        @keyup.tab="updateKeywords"
+                        @paste="updateKeywords"
+                      />
+                    </v-col>
+                  </v-row>
+
                   <v-text-field
+                    v-show="showRuleValue"
                     v-model="newRule.value"
                     label="Value"
                     type="text"
@@ -137,15 +204,23 @@
               <v-card-actions>
                 <v-spacer />
                 <v-btn
-                  color="blue darken-1"
+                  color="red"
                   text
                   @click="closeDialog()"
                 >
                   Close
                 </v-btn>
                 <v-btn
-                  color="blue darken-1"
+                  color="blue"
                   text
+                  @click="validateRule()"
+                >
+                  Validate
+                </v-btn>
+                <v-btn
+                  color="green"
+                  text
+                  :disabled="saveBtnDisabled"
                   @click="saveRule()"
                 >
                   Save
@@ -173,6 +248,22 @@
   import ConnectorService from '@/services/connector.service.js'
   export default {
     data: () => ({
+      saveBtnDisabled: true,
+      showRuleValue: false,
+      keywordList: [],
+      search: null,
+      lang: null,
+      langList: [
+        { id: 'es', text: 'Spanish' },
+        { id: 'en', text: 'English' },
+      ],
+      operator: 'and',
+      operatorList: [
+        { id: 'or', text: 'OR' },
+        { id: 'and', text: 'AND' },
+      ],
+      cbIgnoreRt: false,
+      cbIgnoreReply: false,
       showSnackbar: false,
       snackbarColor: 'error',
       snackbarMessage: '',
@@ -190,6 +281,36 @@
       this.loadStreamStatus()
     },
     methods: {
+      validateRule () {
+        if (this.lang) {
+          this.newRule.value = 'lang:' + this.lang
+        }
+        if (this.cbIgnoreRt) {
+          this.newRule.value += ' -is:retweet'
+        }
+        if (this.cbIgnoreReply) {
+          this.newRule.value += ' -is:reply'
+        }
+        var keywordStr = ''
+        if (this.operator === 'or') {
+          keywordStr = this.keywordList.join(' OR ')
+        } else {
+          keywordStr = this.keywordList.join(' ')
+        }
+        if (this.keywordStr !== '') {
+          this.newRule.value += ' (' + keywordStr + ')'
+        }
+        this.showRuleValue = true
+        this.saveBtnDisabled = false
+      },
+      updateKeywords () {
+        this.$nextTick(() => {
+          this.keywordList.push(...this.search.split(','))
+          this.$nextTick(() => {
+            this.search = ''
+          })
+        })
+      },
       startStream () {
         ConnectorService.startStream().then(
           response => {
@@ -238,6 +359,11 @@
           tag: '',
           value: '',
         }
+        this.lang = null
+        this.cbIgnoreRt = false
+        this.cbIgnoreReply = false
+        this.operator = 'and'
+        this.keywordList = []
       },
       saveRule () {
         if (this.newRule.tag && this.newRule.value) {

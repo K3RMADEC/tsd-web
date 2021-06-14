@@ -97,6 +97,11 @@
     data: () => ({
       items: [
         {
+          icon: 'mdi-view-dashboard',
+          title: 'dashboard',
+          to: '/dashboard',
+        },
+        {
           icon: 'mdi-account',
           title: 'users',
           to: '/pages/users',
@@ -118,41 +123,6 @@
           title: 'map',
           icon: 'mdi-map-marker',
           to: '/maps/leaflet-map',
-        },
-        {
-          icon: 'mdi-view-dashboard',
-          title: 'dashboard',
-          to: '/dashboard',
-        },
-        {
-          icon: 'mdi-account',
-          title: 'user',
-          to: '/pages/user-profile',
-        },
-        {
-          title: 'rtables',
-          icon: 'mdi-clipboard-outline',
-          to: '/tables/regular-tables',
-        },
-        {
-          title: 'typography',
-          icon: 'mdi-format-font',
-          to: '/components/typography',
-        },
-        {
-          title: 'icons',
-          icon: 'mdi-chart-bubble',
-          to: '/components/icons',
-        },
-        {
-          title: 'google',
-          icon: 'mdi-map-marker',
-          to: '/maps/google-maps',
-        },
-        {
-          title: 'notifications',
-          icon: 'mdi-bell',
-          to: '/components/notifications',
         },
       ],
     }),
